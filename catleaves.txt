@@ -1,0 +1,17 @@
+16 Most Prominent Colors and their Hex Codes:
+#161621: 838 pixels
+#191926: 422 pixels
+#171723: 385 pixels
+#1a1a27: 385 pixels
+#1a1a28: 327 pixels
+#191927: 290 pixels
+#1c1c2b: 259 pixels
+#181824: 258 pixels
+#181825: 244 pixels
+#1b1b29: 208 pixels
+#151521: 183 pixels
+#1b1b2a: 174 pixels
+#171724: 173 pixels
+#1d1d2d: 171 pixels
+#161622: 151 pixels
+#1d1d2c: 129 pixels
