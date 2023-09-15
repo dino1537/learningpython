@@ -1,5 +1,7 @@
 import pytz
 from datetime import datetime
+from rich.table import Table
+from rich import print
 
 # Define time zones
 time_zones = {
@@ -21,15 +23,18 @@ icons = {
     'Sydney': '\uf322'    # Icon for Sydney
 }
 
-# Get the current time for each time zone
-current_time = datetime.now()
-formatted_times = []
+# Create a table to display the information
+table = Table(title="World Clock")
+table.add_column("City", justify="right", style="cyan")
+table.add_column("Local Time", justify="right", style="magenta")
 
+# Get the current time for each time zone and add it to the table
+current_time = datetime.now()
 for city, timezone in time_zones.items():
     local_time = current_time.astimezone(pytz.timezone(timezone))
     formatted_time = local_time.strftime("%Y-%m-%d %H:%M:%S %Z")
-    formatted_times.append(f"{icons[city]} {city}: {formatted_time}")
+    table.add_row(f"{icons[city]} {city}:", formatted_time)
 
-# Display the current times with Nerd Font icons on the command line
-print("\n".join(formatted_times))
+# Print the table with rich formatting
+print(table)
 
