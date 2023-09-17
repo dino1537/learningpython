@@ -4,6 +4,7 @@ from youtubesearchpython import VideosSearch
 from rich import print
 from rich.table import Table
 from rich.console import Console
+from rich.style import Style
 import subprocess
 
 console = Console()
@@ -14,18 +15,18 @@ def display_search_results(search_query):
         results = videos_search.result()["result"]
 
         if not results:
-            print("No search results found.")
+            print("[bold red]No search results found.[/bold red]")
         else:
-            table = Table(show_header=True, header_style="bold magenta")
+            table = Table(title="Search Results", style="bold white on blue")
             table.add_column("No.", style="dim")
             table.add_column("Title", style="cyan")
             table.add_column("URL", style="green")
 
             for i, video in enumerate(results, start=1):
                 table.add_row(
-                    f"{i}",
-                    video["title"],
-                    f"https://www.youtube.com/watch?v={video['id']}"
+                    f"[white]{i}[/white]",
+                    f"[yellow]{video['title']}[/yellow]",
+                    f"[blue]https://www.youtube.com/watch?v={video['id']}[/blue]"
                 )
 
             console.print(table)
@@ -33,7 +34,7 @@ def display_search_results(search_query):
         return results  # Return the results list
 
     except Exception as e:
-        print("An error occurred:", str(e))
+        print(f"[bold red]An error occurred:[/bold red] {str(e)}")
 
 def play_audio(url, player="mpv"):
     try:
@@ -51,10 +52,10 @@ def play_audio(url, player="mpv"):
         elif player == "vlc":
             subprocess.call(["vlc", stream_url])
         else:
-            print("Invalid player selection. Supported players: mpv, mplayer, vlc")
+            print("[bold red]Invalid player selection. Supported players: mpv, mplayer, vlc[/bold red]")
 
     except Exception as e:
-        print("An error occurred:", str(e))
+        print(f"[bold red]An error occurred:[/bold red] {str(e)}")
 
 if __name__ == "__main__":
     os.system("clear")
@@ -72,10 +73,10 @@ if __name__ == "__main__":
                 selection = int(selection)
                 if 1 <= selection <= len(results):
                     selected_url = f"https://www.youtube.com/watch?v={results[selection - 1]['id']}"
-                    player = input("Select a media player (mpv, mplayer, vlc): ").strip()
+                    player = input("Select a media player ([yellow]mpv[/yellow], [yellow]mplayer[/yellow], [yellow]vlc[/yellow]): ").strip().lower()
                     play_audio(selected_url, player)
                 else:
-                    print("Invalid selection. Please enter a valid number.")
+                    print("[bold red]Invalid selection. Please enter a valid number.[/bold red]")
             except ValueError:
-                print("Invalid input. Please enter a number or 'back'.")
+                print("[bold red]Invalid input. Please enter a number or 'back'.[/bold red]")
 
