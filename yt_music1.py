@@ -8,6 +8,7 @@ import subprocess
 
 console = Console()
 
+
 def display_search_results(search_query):
     try:
         videos_search = VideosSearch(search_query)
@@ -25,21 +26,22 @@ def display_search_results(search_query):
                 table.add_row(
                     f"{i}",
                     video["title"],
-                    f"https://www.youtube.com/watch?v={video['id']}"
+                    f"https://www.youtube.com/watch?v={video['id']}",
                 )
 
             console.print(table)
-        
+
         return results  # Return the results list
 
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 def play_audio(url, player="mpv"):
     try:
         yt = YouTube(url)
         stream = yt.streams.filter(only_audio=True).first()
-        
+
         # Get the streaming URL without downloading
         stream_url = stream.url
 
@@ -56,6 +58,7 @@ def play_audio(url, player="mpv"):
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 if __name__ == "__main__":
     os.system("clear")
 
@@ -65,17 +68,20 @@ if __name__ == "__main__":
             break
         else:
             results = display_search_results(action)  # Store the results
-            selection = input("Enter the number of the video you want to play (or 'back' to go back): ")
+            selection = input(
+                "Enter the number of the video you want to play (or 'back' to go back): "
+            )
             if selection.lower() == "back":
                 continue
             try:
                 selection = int(selection)
                 if 1 <= selection <= len(results):
                     selected_url = f"https://www.youtube.com/watch?v={results[selection - 1]['id']}"
-                    player = input("Select a media player (mpv, mplayer, vlc): ").strip()
+                    player = input(
+                        "Select a media player (mpv, mplayer, vlc): "
+                    ).strip()
                     play_audio(selected_url, player)
                 else:
                     print("Invalid selection. Please enter a valid number.")
             except ValueError:
                 print("Invalid input. Please enter a number or 'back'.")
-
