@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 def search_and_play_music(music_folder):
     # Check if the specified folder exists
     if not os.path.exists(music_folder):
@@ -8,15 +9,21 @@ def search_and_play_music(music_folder):
         return
 
     # List all files in the music folder
-    music_files = [os.path.join(music_folder, filename) for filename in os.listdir(music_folder)]
+    music_files = [
+        os.path.join(music_folder, filename) for filename in os.listdir(music_folder)
+    ]
 
     if not music_files:
         print(f"No music files found in '{music_folder}'.")
         return
 
     # Filter for common music file extensions (you can extend this list)
-    valid_extensions = ['.mp3', '.wav', '.flac', '.ogg', '.m4a', '.wma']
-    music_files = [file for file in music_files if any(file.endswith(ext) for ext in valid_extensions)]
+    valid_extensions = [".mp3", ".wav", ".flac", ".ogg", ".m4a", ".wma"]
+    music_files = [
+        file
+        for file in music_files
+        if any(file.endswith(ext) for ext in valid_extensions)
+    ]
 
     if not music_files:
         print(f"No supported music files found in '{music_folder}'.")
@@ -36,16 +43,16 @@ def search_and_play_music(music_folder):
             elif 1 <= choice <= len(music_files):
                 selected_song = music_files[choice - 1]
                 print(f"Playing: {os.path.basename(selected_song)}")
-                
+
                 # Choose either MPlayer or MPV to play the song
-                player = "mplayer"  # Change to "mpv" if you prefer MPV
+                player = "mpv"  # Change to "mpv" if you prefer MPV
                 subprocess.run([player, selected_song])
             else:
                 print("Invalid choice. Please enter a valid number.")
         except ValueError:
             print("Invalid input. Please enter a number.")
 
+
 if __name__ == "__main__":
     music_folder = input("Enter the path to your Music folder: ")
     search_and_play_music(music_folder)
-
