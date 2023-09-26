@@ -1,0 +1,14 @@
+{
+    "work_duration": 25,
+    "break_duration": 5,
+    "long_break_interval": 4,
+    "custom_messages": {
+        "work": "Focus on your tasks!",
+        "short_break": "Take a short break!",
+        "long_break": "Take a long break!"
+    },
+    "custom_breaks": {
+        "2": 10,
+        "5": 15
+    }
+}
