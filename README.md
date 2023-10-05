@@ -1,7 +1,7 @@
 
 # learningpython
 
-A collection of Python scripts for various tasks. My Personal Python Codes: A collection of my Python code projects and experiments. Explore my journey in Python programming.
+My Personal Python Codes: A collection of my Python scripts projects and experiments. 
 
 
 ## Introduction
