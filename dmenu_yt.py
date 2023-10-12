@@ -1,67 +1,42 @@
-import os
-from pytube import YouTube
-from youtubesearchpython import VideosSearch
 import subprocess
 import shlex
-import shutil  # Import shutil module
+from youtubesearchpython import VideosSearch
 
-def display_search_results(search_query):
-    try:
-        videos_search = VideosSearch(search_query)
-        results = videos_search.result()["result"]
+def search_and_play_song():
+    query = get_search_query()
 
-        if not results:
-            print("No search results found.")
-        else:
-            return results  # Return the results list
+    if not query:
+        return
 
-    except Exception as e:
-        print("An error occurred:", str(e))
+    videos_search = VideosSearch(query)
+    results = videos_search.result()
 
-def select_audio(results):
-    try:
-        input_text = "\n".join([f"{video['title']}" for video in results])
-        input_text = shlex.quote(input_text)
-        cmd = f"echo -e {input_text} | dmenu -p 'Select a video to play:' -l {len(results)}"
-        selected_title = subprocess.check_output(cmd, shell=True, text=True).strip()
+    if not results:
+        print("No search results found.")
+        return
 
-        # Find the corresponding video URL
-        for video in results:
-            if video['title'] == selected_title:
-                return f"https://www.youtube.com/watch?v={video['id']}"
+    video_choices = results["result"]
+    song_choices = [f"{video['title']} - {video['link']}" for video in video_choices]
 
-        print("Invalid selection. Please select a video from the list.")
-        return None
-    except ValueError:
-        print("Invalid input. Please enter a number.")
-        return None
+    input_text = "\n".join(song_choices)
+    input_text = shlex.quote(input_text)
+    cmd = f"echo -e {input_text} | dmenu -p 'Select a song to play:' -l {len(song_choices) - 1}"
+    selected_song = subprocess.check_output(cmd, shell=True, text=True).strip()
 
-def play_audio(url, player="mpv"):
-    try:
-        yt = YouTube(url)
-        stream = yt.streams.filter(only_audio=True).first()
+    for video in video_choices:
+        if selected_song.endswith(video["link"]):
+            video_url = video["link"]
+            subprocess.call(["mpv", video_url])
+            return
 
-        # Get the streaming URL without downloading
-        stream_url = stream.url
+    print("Invalid selection. Please choose a song from the list.")
 
-        # Check if mpv is available, if not, use a default player
-        if player == "mpv" and shutil.which("mpv"):
-            subprocess.call(["mpv", stream_url])
-        else:
-            print("mpv is not available. Using default player.")
-            subprocess.call(["vlc", stream_url])
 
-    except Exception as e:
-        print("An error occurred:", str(e))
+def get_search_query():
+    cmd = "echo -n | dmenu -p 'Enter a YouTube search query:'"
+    search_query = subprocess.check_output(cmd, shell=True, text=True).strip()
+    return search_query
+
 
 if __name__ == "__main__":
-    while True:
-        action = input("Enter a YouTube search query or 'quit' to exit: ")
-        if action.lower() == "quit":
-            break
-        else:
-            results = display_search_results(action)  # Store the results
-            selected_url = select_audio(results)
-            if selected_url:
-                play_audio(selected_url)
-
+    search_and_play_song()
