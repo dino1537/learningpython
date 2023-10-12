@@ -58,7 +58,7 @@ def play_video(url, player="mpv"):
             subprocess.call(["mpv", url])
         else:
             print("mpv is not available. Using default player.")
-            subprocess.call(["vlc", url])
+            subprocess.call(["mpv", url])
 
     except Exception as e:
         print("An error occurred while playing the video:", str(e))
