@@ -3,7 +3,7 @@ from pytube import YouTube
 from youtubesearchpython import VideosSearch
 import subprocess
 import shlex
-import shutil  # Import shutil module
+import shutil
 
 def get_query_from_dmenu():
     try:
@@ -11,42 +11,46 @@ def get_query_from_dmenu():
         query = subprocess.check_output(cmd, shell=True, text=True).strip()
         return query
     except subprocess.CalledProcessError as e:
-        print("dmenu exited with a non-zero status code. Exiting.")
+        print("Error: dmenu exited with a non-zero status code.")
         return None
 
 def display_search_results(search_query):
     try:
+        print("Searching for videos...")
         videos_search = VideosSearch(search_query)
         results = videos_search.result()["result"]
 
         if not results:
             print("No search results found.")
+            return None
         else:
-            return results  # Return the results list
+            return results
 
     except Exception as e:
-        print("An error occurred:", str(e))
+        print("An error occurred during the search:", str(e))
+        return None
 
 def select_audio(results):
+    if not results:
+        return None
+
     try:
         input_text = "\n".join([f"{video['title']}" for video in results])
         input_text = shlex.quote(input_text)
-        cmd = f"echo -e {input_text} | dmenu -p 'Select a video to play:' -i"
+        cmd = f"echo -e {input_text} | dmenu -p 'Select a video to play:' -l {len(results)}"
         selected_title = subprocess.check_output(cmd, shell=True, text=True).strip()
 
-        # Check if the Escape key was pressed
-        if selected_title == "":
+        if not selected_title:
             return None
 
-        # Find the corresponding video URL
         for video in results:
             if video['title'] == selected_title:
                 return f"https://www.youtube.com/watch?v={video['id']}"
 
         print("Invalid selection. Please select a video from the list.")
         return None
-    except ValueError:
-        print("Invalid input. Please enter a number.")
+    except subprocess.CalledProcessError as e:
+        print("Error: dmenu exited with a non-zero status code.")
         return None
 
 def play_audio(url, player="mpv"):
@@ -54,10 +58,8 @@ def play_audio(url, player="mpv"):
         yt = YouTube(url)
         stream = yt.streams.filter(only_audio=True).first()
 
-        # Get the streaming URL without downloading
         stream_url = stream.url
 
-        # Check if mpv is available, if not, use a default player
         if player == "mpv" and shutil.which("mpv"):
             subprocess.call(["mpv", stream_url])
         else:
@@ -65,15 +67,18 @@ def play_audio(url, player="mpv"):
             subprocess.call(["vlc", stream_url])
 
     except Exception as e:
-        print("An error occurred:", str(e))
+        print("An error occurred while playing the audio:", str(e))
 
 if __name__ == "__main__":
     while True:
-        query = get_query_from_dmenu()  # Get the query from dmenu
-        if not query:
-            break  # Exit if the user cancels dmenu or if there's an error
-        results = display_search_results(query)  # Store the results
-        selected_url = select_audio(results)
-        if selected_url:
-            play_audio(selected_url)
+        query = get_query_from_dmenu()
+        if query is None:
+            break
+
+        results = display_search_results(query)
+        if results is not None:
+            selected_url = select_audio(results)
+            if selected_url is not None:
+                print(f"Playing audio from: {selected_url}")
+                play_audio(selected_url)
 
