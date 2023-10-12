@@ -5,6 +5,7 @@ import subprocess
 import shlex
 import shutil  # Import shutil module
 
+
 def get_query_from_rofi():
     try:
         cmd = "rofi -dmenu -p 'Enter a YouTube search query:'"
@@ -13,6 +14,7 @@ def get_query_from_rofi():
     except subprocess.CalledProcessError as e:
         print("Rofi exited with a non-zero status code. Exiting.")
         return None
+
 
 def display_search_results(search_query):
     try:
@@ -27,6 +29,7 @@ def display_search_results(search_query):
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 def select_audio(results):
     try:
         input_text = "\n".join([f"{video['title']}" for video in results])
@@ -40,7 +43,7 @@ def select_audio(results):
 
         # Find the corresponding video URL
         for video in results:
-            if video['title'] == selected_title:
+            if video["title"] == selected_title:
                 return f"https://www.youtube.com/watch?v={video['id']}"
 
         print("Invalid selection. Please select a video from the list.")
@@ -48,6 +51,7 @@ def select_audio(results):
     except ValueError:
         print("Invalid input. Please enter a number.")
         return None
+
 
 def play_audio(url, player="mpv"):
     try:
@@ -67,6 +71,7 @@ def play_audio(url, player="mpv"):
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 if __name__ == "__main__":
     while True:
         query = get_query_from_rofi()  # Get the query from Rofi
@@ -76,4 +81,3 @@ if __name__ == "__main__":
         selected_url = select_audio(results)
         if selected_url:
             play_audio(selected_url)
-
