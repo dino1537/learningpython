@@ -56,6 +56,12 @@ def add_expense():
     expenses = np.append(expenses, amount)
     custom_categories[category] = custom_categories.get(category, 0) + amount
 
+# Function to input savings data
+def add_saving():
+    global savings
+    amount = float(input("Enter saving amount: "))
+    savings = np.append(savings, amount)
+
 # Function to add a reminder for recurring expenses or income
 def add_reminder():
     description = input("Enter a description for the reminder: ")
