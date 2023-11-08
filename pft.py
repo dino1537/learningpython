@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import atexit
+from tabulate import tabulate
 
 # Initialize empty arrays for income, expenses, and savings
 income = np.array([])
@@ -69,21 +70,29 @@ def add_reminder():
     frequency = int(input("Enter the frequency (in days) for the reminder: "))
     reminders[description] = (amount, frequency)
 
-# Function to calculate and display total income, expenses, and savings
+# Function to display summary in a tabulated format
 def display_summary():
     total_income = np.sum(income)
     total_expenses = np.sum(expenses)
     total_savings = np.sum(savings)
-    print(f"Total Income: {total_income}")
-    print(f"Total Expenses: {total_expenses}")
-    print(f"Total Savings: {total_savings}")
+    
+    # Create a table for displaying the summary
+    table = [
+        ["Category", "Total Amount"],
+        ["Income", total_income],
+        ["Expenses", total_expenses],
+        ["Savings", total_savings]
+    ]
+
+    # Use the tabulate library to format and print the table
+    print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
 
 # Main loop for the finance tracker
 while True:
     print("\nPersonal Finance Tracker Menu:")
     print("1. Add Income")
     print("2. Add Expense")
-    print("3. Add Savings")
+    print("3. Add Saving")
     print("4. Add Reminder")
     print("5. Display Summary")
     print("6. Exit")
