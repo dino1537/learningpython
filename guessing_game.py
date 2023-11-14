@@ -23,6 +23,5 @@ while True:
     elif guess > secret_number:
         print("[bold yellow]The number is too big.[/bold yellow]")
     else:
-        print_box("[bold green]You're an idiot![/bold green]")
+        print_box("[bold green]You're an effing idiot![/bold green]")
         break
-
