@@ -61,7 +61,6 @@ def search_and_play(query, type, limit, page):
 
         while True:
             choice = click.prompt(click.style("Enter the number of the item you want to explore (q to exit)", fg="cyan"))
-            
             # Check if the user wants to exit
             if choice.lower() == "q" or choice.lower() == "exit":
                 # sys.exit(0)  # Remove this line to continue running the script

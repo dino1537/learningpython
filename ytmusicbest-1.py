@@ -8,11 +8,9 @@ from rich.style import Style
 import subprocess
 from rich.prompt import Prompt
 import requests
-from rich.box import Box
-from rich.panel import Panel
 
 console = Console()
-MEDIA_PLAYERS = ["mpv", "mplayer", "vlc"]
+
 # ... (existing imports)
 def display_search_results(search_query):
     try:
@@ -42,28 +40,6 @@ def display_search_results(search_query):
         print(f"[bold red]An error occurred:[/bold red] {str(e)}")
 # ... (rest of the script)
 
-def clear_screen():
-    os.system("clear")
-
-def display_help():
-    console.print("[bold cyan] [green]YouTube[/green] Player Command-line Application[/bold cyan]")
-    console.print("[italic]Instructions:[/italic]")
-
-    # Draw a box around the help section
-    panel_content = "\n".join([
-        "[yellow]1.[/yellow] Enter a search query to find YouTube videos.",
-        "[yellow]2.[/yellow] Select a video to play.",
-        "[yellow]3.[/yellow] Choose a media player to play the audio.",
-        "[yellow]4.[/yellow] Type 'quit' to exit the application.",
-    ])
-    panel = Panel(panel_content)
-    console.print(panel)
-
-    console.print("[italic]Enjoy your music! [/italic]")
-
-def print_separator():
-    console.print("\n[bold][cyan]----------------------------------------[/cyan][/bold]\n")
-
 def play_audio(url, player="mpv"):
     try:
         yt = YouTube(url)
@@ -86,34 +62,24 @@ def play_audio(url, player="mpv"):
         print(f"[bold red]An error occurred:[/bold red] {str(e)}")
 
 if __name__ == "__main__":
-    clear_screen()
-    display_help()
+    os.system("clear")
 
     while True:
-        console.print("\n  [yellow][/yellow] ", end="")
-        action = input("\033[36mEnter a YouTube search query or 'quit' to exit:\033[0m ")
+        action = input("Enter a YouTube search query or 'quit' to exit: ")
         if action.lower() == "quit":
-            clear_screen()
             break
         else:
             results = display_search_results(action)
-            print_separator()
-            console.print("  [yellow][/yellow] ", end="")
-            selection = Prompt.ask("\033[36mEnter the number of the video you want to play (or 'back' to go back):\033[0m ")
+            selection = Prompt.ask("Enter the number of the video you want to play (or 'back' to go back): ")
 
             if selection.lower() == "back":
-                clear_screen()
-                display_help()
                 continue
             try:
                 selection = int(selection)
                 if 1 <= selection <= len(results):
                     selected_url = f"https://www.youtube.com/watch?v={results[selection - 1]['id']}"
-                    console.print("  [yellow][/yellow] ", end="")
-                    player_prompt = Prompt.ask(f"\033[93mSelect a media player ({'/'.join(MEDIA_PLAYERS)}):\033[0m ")
-                    clear_screen()
-                    play_audio(selected_url, player_prompt)
-                    display_help()
+                    player = Prompt.ask("Select a media player ([blue]mpv[/blue], [blue]mplayer[/blue], [blue]vlc[/blue]): ").strip().lower()
+                    play_audio(selected_url, player)
                 else:
                     print("[bold red]Invalid selection. Please enter a valid number.[/bold red]")
             except ValueError:

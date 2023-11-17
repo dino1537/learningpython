@@ -39,4 +39,3 @@ def get_movie_info(query):
 if __name__ == "__main__":
     query = input("Enter the movie or TV show title: ")
     get_movie_info(query)
-

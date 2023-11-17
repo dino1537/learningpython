@@ -31,12 +31,10 @@ def search_and_play_song():
 
     print("Invalid selection. Please choose a song from the list.")
 
-
 def get_search_query():
     cmd = "echo -n | dmenu -p 'Enter a YouTube search query:'"
     search_query = subprocess.check_output(cmd, shell=True, text=True).strip()
     return search_query
-
 
 if __name__ == "__main__":
     search_and_play_song()
