@@ -4,7 +4,7 @@ import os
 import subprocess
 import signal
 import shutil
-
+import dbus
 
 myname = 'checkupdates'
 myver = '1.0.0'
@@ -35,6 +35,17 @@ def warning(message):
 
 def error(message):
     print(f"{RED}==> ERROR:{ALL_OFF}{BOLD} {message}{ALL_OFF}")
+
+# Notify function using dbus
+def send_notification(message):
+    try:
+        bus = dbus.SessionBus()
+        notify_obj = bus.get_object('org.freedesktop.Notifications', '/org/freedesktop/Notifications')
+        notify_interface = dbus.Interface(notify_obj, 'org.freedesktop.Notifications')
+        notify_interface.Notify(myname, 0, '', 'checkupdates', message, [], {}, 10000)
+    except Exception as e:
+        print(f"Error sending notification: {e}")
+
 
 # Check for command-line arguments
 if __name__ == "__main__":
@@ -73,12 +84,14 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError:
         error('Cannot fetch updates')
         os.sys.exit(1)
+    
+ # List pending updates
+try:
+    updates_bytes = subprocess.check_output(["pacman", "-Qu", "--dbpath", CHECKUPDATES_DB], stderr=subprocess.DEVNULL)
+    updates = updates_bytes.decode('utf-8')  # Decode bytes to string
+    if updates:
+        send_notification("Pending updates:\n" + str(updates))
+except subprocess.CalledProcessError:
+    pass  # You can add any specific handling for the error here
 
-    # List pending updates
-    try:
-        updates = subprocess.check_output(["pacman", "-Qu", "--dbpath", CHECKUPDATES_DB], stderr=subprocess.DEVNULL, universal_newlines=True)
-        print(updates)
-    except subprocess.CalledProcessError:
-        pass
-
-    os.sys.exit(0)
+os.sys.exit(0)   
