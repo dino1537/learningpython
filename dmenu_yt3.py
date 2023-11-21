@@ -7,7 +7,7 @@ import shutil
 
 def get_query_from_dmenu():
     try:
-        cmd = "echo -n '' | dmenu -p 'Enter a YouTube search query:'"
+        cmd = "echo -n '' | dmenu -p 'Search Youtube:'"
         query = subprocess.check_output(cmd, shell=True, text=True).strip()
         return query
     except subprocess.CalledProcessError as e:
