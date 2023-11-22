@@ -1,0 +1,8 @@
+{
+    "header_style": "bold magenta",
+    "text_color": "bold white",
+    "summary_color": "bold yellow",
+    "keywords_color": "bold green",
+    "error_color": "red",
+    "reading_list_file": "reading_list.json"
+}
