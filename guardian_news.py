@@ -5,7 +5,7 @@ from rich import print
 api_key = 'YOUR_API_KEY'
 
 # Define the topics and the number of articles you want for each
-topics = ['India', 'Arsenal', 'Cricket', 'Science', 'Technology', 'world news']
+topics = ['India', 'Poltics', 'Arsenal', 'Cricket', 'Science', 'Technology', 'world news']
 num_articles = 5
 
 # Initialize an empty dictionary to store the articles

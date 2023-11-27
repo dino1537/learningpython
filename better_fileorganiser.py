@@ -2,6 +2,9 @@ import os
 import shutil
 import datetime
 import logging
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Initialize logging
 logging.basicConfig(filename='organize_files.log', level=logging.INFO,
@@ -63,7 +66,7 @@ def organize_files(source_dir, organize_by='type'):
 if __name__ == "__main__":
     source_directory = input("Enter the source directory path: ")
     organization_criteria = input("Organize by 'type' or 'date': ").lower()
-    
+
     if organization_criteria not in ['type', 'date']:
         logging.error("Invalid organization criteria. Use 'type' or 'date'.")
         print("Invalid organization criteria. Use 'type' or 'date'.")

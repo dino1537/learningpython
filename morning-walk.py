@@ -9,7 +9,8 @@ conn = sqlite3.connect(db_filename)
 cursor = conn.cursor()
 
 # Create a table to store the walk plan
-cursor.execute('''
+cursor.execute(
+    """
     CREATE TABLE IF NOT EXISTS morning_walk (
         date TEXT PRIMARY KEY,
         day TEXT,
@@ -18,7 +19,8 @@ cursor.execute('''
         call_to TEXT,
         distance_km INTEGER
     )
-''')
+"""
+)
 
 # Generate a morning walk plan for a month (30 days) starting from tomorrow
 start_date = datetime.now() + timedelta(days=1)
@@ -46,10 +48,18 @@ for day in range((end_date - start_date).days):
         walk_time = "6:30 AM - 9:00 AM"
 
     # Add the plan to the SQLite database
-    cursor.execute("INSERT INTO morning_walk (date, day, alarm_time_start, alarm_time_end, call_to, distance_km) "
-                   "VALUES (?, ?, ?, ?, ?, ?)",
-                   (current_date.strftime("%Y-%m-%d"), current_date.strftime("%A"), alarm_time_start,
-                    alarm_time_end, call_to, distance_km))
+    cursor.execute(
+        "INSERT INTO morning_walk (date, day, alarm_time_start, alarm_time_end, call_to, distance_km) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (
+            current_date.strftime("%Y-%m-%d"),
+            current_date.strftime("%A"),
+            alarm_time_start,
+            alarm_time_end,
+            call_to,
+            distance_km,
+        ),
+    )
 
     # Add the plan to the Markdown content
     markdown_content += f"| {current_date.strftime('%Y-%m-%d')} | {current_date.strftime('%A')} | {distance_km} | {walk_time} | {alarm_time_start} | {call_to} |\n"
@@ -74,4 +84,3 @@ with open(org_filename, "w") as org_file:
     org_file.write(org_content)
 
 print(f"Morning walk plan in Org format created in '{org_filename}'.")
-

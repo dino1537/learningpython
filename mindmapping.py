@@ -1,4 +1,3 @@
-
 import typer
 from rich import print
 from colorama import init

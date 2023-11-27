@@ -4,6 +4,10 @@ from youtubesearchpython import VideosSearch
 import subprocess
 import shlex
 import shutil
+import argparse
+
+DEFAULT_PLAYER = "mpv"
+
 
 def get_query_from_dmenu():
     try:
@@ -13,6 +17,7 @@ def get_query_from_dmenu():
     except subprocess.CalledProcessError as e:
         print("Error: dmenu exited with a non-zero status code.")
         return None
+
 
 def display_search_results(search_query):
     try:
@@ -29,6 +34,7 @@ def display_search_results(search_query):
         print("An error occurred during the search:", str(e))
         return None
 
+
 def select_audio(results):
     if not results:
         return None
@@ -37,7 +43,8 @@ def select_audio(results):
         input_text = "\n".join([f"{video['title']}" for video in results])
         input_text = shlex.quote(input_text)
         cmd = f"echo -e {input_text} | dmenu -p 'Select a video to play:' -l {len(results)}"
-        selected_title = subprocess.check_output(cmd, shell=True, text=True).strip()
+        selected_title = subprocess.check_output(
+            cmd, shell=True, text=True).strip()
 
         if not selected_title:
             return None
@@ -52,23 +59,39 @@ def select_audio(results):
         print("Error: dmenu exited with a non-zero status code.")
         return None
 
-def play_audio(url, player="mpv"):
+
+def play_audio(url, player=DEFAULT_PLAYER):
     try:
         yt = YouTube(url)
         stream = yt.streams.filter(only_audio=True).first()
-
         stream_url = stream.url
 
         if player == "mpv" and shutil.which("mpv"):
+            print("Playing audio with mpv...")
             subprocess.call(["mpv", stream_url])
         else:
-            print("mpv is not available. Using default player.")
-            subprocess.call(["vlc", stream_url])
+            print(f"{player} is not available. Using default player.")
+            subprocess.call([player, stream_url])
 
     except Exception as e:
         print("An error occurred while playing the audio:", str(e))
 
-if __name__ == "__main__":
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Search and play YouTube audio.")
+    parser.add_argument(
+        "-p",
+        "--player",
+        choices=[
+            "mpv",
+            "vlc"],
+        default=DEFAULT_PLAYER,
+        help="Specify the audio player.")
+    return parser.parse_args()
+
+
+def main():
     while True:
         query = get_query_from_dmenu()
         if query is None:
@@ -78,5 +101,9 @@ if __name__ == "__main__":
         if results is not None:
             selected_url = select_audio(results)
             if selected_url is not None:
-                play_audio(selected_url)
+                play_audio(selected_url, args.player)
 
+
+if __name__ == "__main__":
+    args = parse_arguments()
+    main()
