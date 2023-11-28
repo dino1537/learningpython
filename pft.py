@@ -13,7 +13,7 @@ custom_categories = {}
 reminders = {}
 
 def save_data():
-    with open("financial_data.pkl", "wb") as file:
+    with open("financial_data_1.pkl", "wb") as file:
         data = {
             "income": income,
             "expenses": expenses,
@@ -26,7 +26,7 @@ def save_data():
 def load_data():
     global income, expenses, savings, custom_categories, reminders
     try:
-        with open("financial_data.pkl", "rb") as file:
+        with open("financial_data_1.pkl", "rb") as file:
             data = pickle.load(file)
             income = data["income"] if "income" in data else np.array([])
             expenses = data["expenses"] if "expenses" in data else np.array([])

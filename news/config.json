@@ -1,6 +1,6 @@
 {
     "header_style": "bold magenta",
-    "text_color": "bold white",
+    "text_color": "white",
     "summary_color": "bold yellow",
     "keywords_color": "bold green",
     "error_color": "red",

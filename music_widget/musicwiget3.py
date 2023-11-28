@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import PhotoImage
+from tkinter import PhotoImage, simpledialog
 
 import pygame
 
@@ -16,6 +16,7 @@ root.configure(bg="#100F0F")  # Set the background color of the root window
 def play_audio(audio_file):
     pygame.mixer.music.load(audio_file)
     pygame.mixer.music.play()
+    song_label.config(text=f"󰐊 {os.path.basename(audio_file)}")
 
 # Function to pause the audio
 def pause_audio():
@@ -35,22 +36,32 @@ def play_next_audio():
 def exit_widget():
     root.destroy()
 
+# Function to change the font
+def change_font():
+    font_face = simpledialog.askstring("Font Face", "Enter the font face:")
+    font_size = simpledialog.askinteger("Font Size", "Enter the font size:")
+    song_label.config(font=(font_face, font_size))
+
 # Get a list of audio files in the "Music" directory
-music_directory = "/home/dino/Music/Italian"
-audio_files = [f for f in os.listdir(music_directory) if f.endswith((".mp3", ".flac", ".wav"))]
+music_directory = "/home/dino/Music"
+audio_files = [f for f in os.listdir(music_directory) if f.endswith((".mp3", ".wav"))]
 
 # Initialize the index of the current audio file
 current_audio_index = 0
 
 # Create a frame for the music widget
 music_widget_frame = tk.Frame(
-    root, width=150, height=75, relief="solid", bd=2, padx=5, pady=5, bg="#100F0F"
+    root, width=200, height=150, relief="solid", bd=2, padx=10, pady=10, bg="#100F0F"
 )
-music_widget_frame.pack(padx=5, pady=5)
+music_widget_frame.pack(padx=10, pady=10)
 
 # Add an audio player to the frame
 audio_player = tk.Frame(music_widget_frame, bd=2, relief="solid", bg="#100F0F")
-audio_player.pack(pady=10, padx=10, fill="x")
+audio_player.pack(pady=5, padx=5, fill="x")
+
+# Create a label to display the current song
+song_label = tk.Label(audio_player, text="", bg="#100F0F", fg="white")
+song_label.pack()
 
 # Create icons for buttons
 play_icon = PhotoImage(file="play.png")
@@ -58,6 +69,7 @@ pause_icon = PhotoImage(file="pause.png")
 stop_icon = PhotoImage(file="stop.png")
 next_icon = PhotoImage(file="next.png")
 exit_icon = PhotoImage(file="exit.png")  # Add an icon for the exit button
+font_icon = PhotoImage(file="font.png")  # Add an icon for the font button
 
 # Add buttons with icons
 play_button = tk.Button(
@@ -75,6 +87,8 @@ stop_button = tk.Button(music_widget_frame, image=stop_icon, command=stop_audio,
 stop_button.pack(side="left", padx=2)
 next_button = tk.Button(music_widget_frame, image=next_icon, command=play_next_audio, bg="#100F0F")
 next_button.pack(side="left", padx=2)
+font_button = tk.Button(music_widget_frame, image=font_icon, command=change_font, bg="#100F0F")  # Add a font button
+font_button.pack(side="left", padx=2)
 exit_button = tk.Button(music_widget_frame, image=exit_icon, command=exit_widget, bg="#100F0F")  # Add an exit button
 exit_button.pack(side="left", padx=2)
 
