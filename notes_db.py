@@ -15,7 +15,7 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS notes
-                 (title TEXT PRIMARY KEY, content TEXT)''')
+                 (title TEXT PRIMARY KEY, content TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
 
@@ -36,7 +36,7 @@ def create(title, content):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     try:
-        c.execute("INSERT INTO notes VALUES (?,?)", (title, content))
+        c.execute("INSERT INTO notes (title, content) VALUES (?,?)", (title, content))
         console = Console()
         console.print(f"Note '{title}' created successfully.", style="bold green")
     except sqlite3.IntegrityError:
@@ -50,15 +50,16 @@ def list():
     """List all notes"""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    notes = c.execute("SELECT title FROM notes").fetchall()
+    notes = c.execute("SELECT title, created_at FROM notes").fetchall()
     if not notes:
         console = Console()
         console.print("No notes found.", style="bold yellow")
     else:
         table = Table(title="List of Notes")
-        table.add_column("Notes")
+        table.add_column("Title")
+        table.add_column("Created At")
         for note in notes:
-            table.add_row(note[0])
+            table.add_row(note[0], str(note[1]))
         console = Console()
         console.print(table)
     conn.close()
