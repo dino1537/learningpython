@@ -8,23 +8,43 @@ from pygments.formatters import TerminalFormatter
 
 SNIPPETS_FILE = "snippets.json"
 
+
 def load_snippets():
+    """Load snippets from the JSON file."""
     if os.path.exists(SNIPPETS_FILE):
         with open(SNIPPETS_FILE, "r") as file:
-            return json.load(file)
+            try:
+                return json.load(file)
+            except json.JSONDecodeError:
+                print(f"Error: {SNIPPETS_FILE} is not a valid JSON file.")
+                sys.exit(1)
     else:
         return {}
 
+
 def save_snippets(snippets):
+    """Save snippets to the JSON file."""
     with open(SNIPPETS_FILE, "w") as file:
         json.dump(snippets, file, indent=4)
 
-def add_snippet(snippets, name, code):
-    snippets[name] = code
-    save_snippets(snippets)
-    print(f"Snippet '{name}' added successfully!")
+
+def manage_snippet(snippets, name, code=None):
+    """Manage a snippet (add, edit, or delete)."""
+    if code is None:  # delete snippet
+        if name in snippets:
+            del snippets[name]
+            save_snippets(snippets)
+            print(f"Snippet '{name}' deleted successfully!")
+        else:
+            print(f"Snippet '{name}' not found!")
+    else:  # add or edit snippet
+        snippets[name] = code
+        save_snippets(snippets)
+        print(f"Snippet '{name}' added/edited successfully!")
+
 
 def retrieve_snippet(snippets, name):
+    """Retrieve a snippet by its name."""
     if name in snippets:
         code = snippets[name]
         print(f"Snippet '{name}':")
@@ -32,28 +52,16 @@ def retrieve_snippet(snippets, name):
     else:
         print(f"Snippet '{name}' not found!")
 
-def edit_snippet(snippets, name, new_code):
-    if name in snippets:
-        snippets[name] = new_code
-        save_snippets(snippets)
-        print(f"Snippet '{name}' edited successfully!")
-    else:
-        print(f"Snippet '{name}' not found!")
-
-def delete_snippet(snippets, name):
-    if name in snippets:
-        del snippets[name]
-        save_snippets(snippets)
-        print(f"Snippet '{name}' deleted successfully!")
-    else:
-        print(f"Snippet '{name}' not found!")
 
 def list_snippets(snippets):
+    """List all available snippets."""
     print("Available snippets:")
-    for name in snippets:
+    for name in sorted(snippets):
         print(f"- {name}")
 
+
 def print_highlighted_code(code):
+    """Print the code with syntax highlighting."""
     try:
         lexer = get_lexer_by_name("python", stripall=True)
         formatter = TerminalFormatter()
@@ -62,7 +70,9 @@ def print_highlighted_code(code):
     except Exception as e:
         print("Error highlighting code:", e)
 
+
 def main():
+    """Handle the command-line arguments and call the appropriate function."""
     parser = argparse.ArgumentParser(description="Code Snippet Management Tool")
     parser.add_argument("--add", help="Add a code snippet", action="store_true")
     parser.add_argument("--retrieve", help="Retrieve a code snippet by name")
@@ -75,24 +85,37 @@ def main():
 
     if args.add:
         name = input("Enter snippet name: ")
-        code = input("Enter code snippet: ")
-        add_snippet(snippets, name, code)
+        print("Enter code snippet (end with 'END'): ")
+        code = ""
+        while True:
+            line = input()
+            if line == "END":
+                break
+            code += line + "\n"
+        manage_snippet(snippets, name, code)
     elif args.retrieve:
         retrieve_snippet(snippets, args.retrieve)
     elif args.edit:
         name = args.edit
         if name in snippets:
-            new_code = input(f"Enter new code for '{name}': ")
-            edit_snippet(snippets, name, new_code)
+            print("Enter new code for '{name}' (end with 'END'): ")
+            new_code = ""
+            while True:
+                line = input()
+                if line == "END":
+                    break
+                new_code += line + "\n"
+            manage_snippet(snippets, name, new_code)
         else:
             print(f"Snippet '{name}' not found!")
     elif args.delete:
         name = args.delete
-        delete_snippet(snippets, name)
+        manage_snippet(snippets, name)
     elif args.list:
         list_snippets(snippets)
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     try:
