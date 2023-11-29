@@ -23,11 +23,11 @@ def display_search_results(search_query):
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 def select_audio(results):
     try:
         input_text = "\n".join([f"{video['title']}" for video in results])
-        input_text = shlex.quote(input_text)
-        cmd = f"echo -e {input_text} | dmenu -p 'Select a video to play:' -l {len(results)}"
+        cmd = f"echo -e '{input_text}' | dmenu -p 'Select a video to play:' -l {len(results)}"
         selected_title = subprocess.check_output(cmd, shell=True, text=True).strip()
 
         # Find the corresponding video URL
@@ -40,6 +40,7 @@ def select_audio(results):
     except ValueError:
         print("Invalid input. Please enter a number.")
         return None
+
 
 def play_audio(url, player="mpv"):
     try:
@@ -59,13 +60,14 @@ def play_audio(url, player="mpv"):
     except Exception as e:
         print("An error occurred:", str(e))
 
+
 if __name__ == "__main__":
     while True:
         query = get_query_from_dmenu()  # Get the query from dmenu
         if not query:
+            print("Exiting the program.")
             break  # Exit if the user cancels dmenu
         results = display_search_results(query)  # Store the results
         selected_url = select_audio(results)
         if selected_url:
             play_audio(selected_url)
-
