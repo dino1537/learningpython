@@ -16,6 +16,7 @@ savings = np.array([])
 custom_categories = {}
 reminders = {}
 
+
 def save_data():
     with open("financial_data.pkl", "wb") as file:
         data = {
@@ -23,9 +24,10 @@ def save_data():
             "expenses": expenses,
             "savings": savings,
             "categories": custom_categories,
-            "reminders": reminders
+            "reminders": reminders,
         }
         pickle.dump(data, file)
+
 
 def load_data():
     global income, expenses, savings, custom_categories, reminders
@@ -40,17 +42,20 @@ def load_data():
     except FileNotFoundError:
         print("No previous data found. Starting with empty records.")
 
+
 # Load data when the script starts
 load_data()
 
 # Save data before exiting
 atexit.register(save_data)
 
+
 # Function to input income data
 def add_income():
     global income
     amount = float(input("Enter income amount: "))
     income = np.append(income, amount)
+
 
 # Function to input expenses data with date, time, and category
 def add_expense():
@@ -61,11 +66,13 @@ def add_expense():
     expenses = np.append(expenses, [amount, date_time, category])
     custom_categories[category] = custom_categories.get(category, 0) + amount
 
+
 # Function to input savings data
 def add_saving():
     global savings
     amount = float(input("Enter saving amount: "))
     savings = np.append(savings, amount)
+
 
 # Function to add a reminder for recurring expenses or income
 def add_reminder():
@@ -74,11 +81,10 @@ def add_reminder():
     frequency = int(input("Enter the frequency (in days) for the reminder: "))
     reminders[description] = (amount, frequency)
 
+
 # Function to display detailed expense information
 def display_expenses():
-    table = [
-        ["Expense ID", "Amount", "Date", "Category"]
-    ]
+    table = [["Expense ID", "Amount", "Date", "Category"]]
     for i in range(len(expenses) // 3):
         expense_id = i + 1
         amount = expenses[i * 3]
@@ -88,23 +94,29 @@ def display_expenses():
 
     print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
 
+
 # Function to calculate and display total income, expenses, and savings
 def display_summary():
     total_income = np.sum(income)
     total_expenses = np.sum(expenses[::3])  # Sum every 3rd element (amounts)
     total_savings = np.sum(savings)
-    
-    table = [
-        ["Category", "Total Amount"]
-    ]
+
+    table = [["Category", "Total Amount"]]
 
     # Calculate and display custom categories
     for category, amount in custom_categories.items():
         table.append([category, amount])
 
-    table.extend([["Income", str(total_income)], ["Expenses", str(total_expenses)], ["Savings", str(total_savings)]])
+    table.extend(
+        [
+            ["Income", str(total_income)],
+            ["Expenses", str(total_expenses)],
+            ["Savings", str(total_savings)],
+        ]
+    )
 
     print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
+
 
 # Function to export summary and expenses to a PDF using ReportLab
 def export_to_pdf():
@@ -113,25 +125,31 @@ def export_to_pdf():
     elements = []
 
     # Create a table for the summary
-    summary_table = [
-        ["Category", "Total Amount"]
-    ]
+    summary_table = [["Category", "Total Amount"]]
 
     # Calculate and add custom categories
     for category, amount in custom_categories.items():
         summary_table.append([category, amount])
 
-    summary_table.extend([["Income", str(np.sum(income))], ["Expenses", str(np.sum(expenses[::3]))], ["Savings", str(np.sum(savings))]])
+    summary_table.extend(
+        [
+            ["Income", str(np.sum(income))],
+            ["Expenses", str(np.sum(expenses[::3]))],
+            ["Savings", str(np.sum(savings))],
+        ]
+    )
 
     # Define table style
-    style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-    ])
+    style = TableStyle(
+        [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+        ]
+    )
 
     # Create the summary table
     table = Table(summary_table)
@@ -139,9 +157,7 @@ def export_to_pdf():
     elements.append(table)
 
     # Create a table for detailed expenses
-    expenses_table = [
-        ["Expense ID", "Amount", "Date", "Category"]
-    ]
+    expenses_table = [["Expense ID", "Amount", "Date", "Category"]]
     for i in range(len(expenses) // 3):
         expense_id = i + 1
         amount = expenses[i * 3]
@@ -150,14 +166,16 @@ def export_to_pdf():
         expenses_table.append([expense_id, amount, date_time, category])
 
     # Define style for expenses table
-    style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-    ])
+    style = TableStyle(
+        [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+        ]
+    )
 
     # Create the expenses table
     table = Table(expenses_table)
@@ -166,6 +184,7 @@ def export_to_pdf():
 
     doc.build(elements)
     print(f"PDF export completed. Saved as {pdf_file}")
+
 
 # Main loop for the finance tracker
 while True:

@@ -12,6 +12,7 @@ savings = np.array([])
 custom_categories = {}
 reminders = {}
 
+
 def save_data():
     with open("financial_data_1.pkl", "wb") as file:
         data = {
@@ -19,9 +20,10 @@ def save_data():
             "expenses": expenses,
             "savings": savings,
             "categories": custom_categories,
-            "reminders": reminders
+            "reminders": reminders,
         }
         pickle.dump(data, file)
+
 
 def load_data():
     global income, expenses, savings, custom_categories, reminders
@@ -36,6 +38,7 @@ def load_data():
     except FileNotFoundError:
         print("No previous data found. Starting with empty records.")
 
+
 # Load data when the script starts
 load_data()
 
@@ -49,6 +52,7 @@ def add_income():
     amount = float(input("Enter income amount: "))
     income = np.append(income, amount)
 
+
 # Function to input expenses data with custom category support
 def add_expense():
     global expenses
@@ -57,11 +61,13 @@ def add_expense():
     expenses = np.append(expenses, amount)
     custom_categories[category] = custom_categories.get(category, 0) + amount
 
+
 # Function to input savings data
 def add_saving():
     global savings
     amount = float(input("Enter saving amount: "))
     savings = np.append(savings, amount)
+
 
 # Function to add a reminder for recurring expenses or income
 def add_reminder():
@@ -70,22 +76,24 @@ def add_reminder():
     frequency = int(input("Enter the frequency (in days) for the reminder: "))
     reminders[description] = (amount, frequency)
 
+
 # Function to display summary in a tabulated format
 def display_summary():
     total_income = np.sum(income)
     total_expenses = np.sum(expenses)
     total_savings = np.sum(savings)
-    
+
     # Create a table for displaying the summary
     table = [
         ["Category", "Total Amount"],
         ["Income", total_income],
         ["Expenses", total_expenses],
-        ["Savings", total_savings]
+        ["Savings", total_savings],
     ]
 
     # Use the tabulate library to format and print the table
     print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
+
 
 # Main loop for the finance tracker
 while True:

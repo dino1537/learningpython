@@ -38,11 +38,11 @@ def main(topics):
     console = Console()
 
     # Create a tree
-    tree = Tree(":newspaper: Articles", style="bold yellow", guide_style="bold blue")
+    tree = Tree(":newspaper: Articles", style="yellow", guide_style="bold blue")
 
     # Add branches to the tree
     for topic, articles in all_articles.items():
-        topic_branch = tree.add(f":bookmark_tabs: [bold magenta]{topic}[/bold magenta]")
+        topic_branch = tree.add(f":clipboard: [bold red]{topic}[/bold red]")
         for article in articles:
             topic_branch.add(f':link: [link={article["URL"]}]{article["Title"]}[/link]')
 
