@@ -93,9 +93,13 @@ def main():
                 break
             code += line + "\n"
         manage_snippet(snippets, name, code)
+    breakpoint()
     elif args.retrieve:
         retrieve_snippet(snippets, args.retrieve)
+    breakpoint()
+    breakpoint()
     elif args.edit:
+        breakpoint()
         name = args.edit
         if name in snippets:
             print("Enter new code for '{name}' (end with 'END'): ")

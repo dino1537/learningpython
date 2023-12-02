@@ -36,6 +36,7 @@ def send_email(to_email, subject, message, attachments=[]):
     for attachment in attachments:
         with open(attachment, "rb") as file:
             part = MIMEApplication(file.read(), Name=attachment)
+            breakpoint()
             part["Content-Disposition"] = f'attachment; filename="{attachment}"'
             msg.attach(part)
 
@@ -83,4 +84,5 @@ if __name__ == "__main__":
     )
 
     # Receive and print emails
+    breakpoint()
     receive_emails()
